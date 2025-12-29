@@ -1,0 +1,9 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS pgjwt;
+
+-- Make sure your secret is set in Postgres before using this function:
+-- Copy secret from .env file it must be same as django secret key
+
+SELECT set_config('myapp.jwt_secret', '< SECRET >', false);
+ALTER SYSTEM SET myapp.jwt_secret = '< SECRET >';
+SELECT pg_reload_conf();
