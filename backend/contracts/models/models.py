@@ -37,6 +37,12 @@ class Contract(CustomModel):
         default=uuid.uuid4,
         editable=False,
     )
+    oldid = models.IntegerField( # the is for migrate from old to new db
+        primary_key=False,
+        unique=True,
+        blank=True,
+        null=True
+    )
     title = models.CharField(
         verbose_name="عنوان قرارداد",
         max_length=250,
@@ -157,6 +163,12 @@ class ContractBorder(CustomModel):
         primary_key=True,
         default=uuid.uuid4,
         editable=False
+    )
+    oldid = models.IntegerField( # the is for migrate from old to new db
+        primary_key=False,
+        unique=False,
+        blank=True,
+        null=True
     )
     title = models.CharField(
         verbose_name="عنوان محدوده قرارداد",

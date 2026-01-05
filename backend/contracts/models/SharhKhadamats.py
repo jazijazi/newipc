@@ -131,6 +131,12 @@ class ShrhLayer(CustomModel):
         null=False,
         blank=False,
     )
+    oldid = models.IntegerField( # the is for migrate from old to new db
+        primary_key=False,
+        unique=False,
+        blank=True,
+        null=True
+    )
     layer_name = models.ForeignKey(
         LayersNames,
         on_delete=models.CASCADE,

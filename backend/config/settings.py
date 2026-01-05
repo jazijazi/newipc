@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'contracts',
     'layers',
 
+    'legacy_app',
+
     'drf_spectacular',
     'leaflet',
 ]
@@ -84,6 +86,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+USE_LEGACY_DB = config('USE_LEGACY_DB', default=False, cast=bool)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -93,8 +97,23 @@ DATABASES = {
         'HOST': config('POSTGRES_HOST') if DEBUG else 'pgbouncer', # in prod database connectin is behind pgbouncer container
         'PORT': config('POSTGRES_PORT'),
         'CONN_MAX_AGE': 0 if not DEBUG else None,  # Required for pgbouncer transaction pooling in prod
+    },
+    'legacy': {
+        
     }
 }
+if USE_LEGACY_DB:
+    DATABASES['legacy'] = {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': config('LEGACY_DB_DB'), 
+        'USER': config('LEGACY_DB_USER'),
+        'PASSWORD': config('LEGACY_DB_PASSWORD'), 
+        'HOST': config('LEGACY_DB_HOST'),
+        'PORT': config('LEGACY_DB_PORT'),
+    }
+
+
+DATABASE_ROUTERS = ['config.routers.LegacyRouter']
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -113,7 +132,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
-        "KEY_PREFIX": "zarrin:django",
+        "KEY_PREFIX": "newipc:django",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "IGNORE_EXCEPTIONS": True,
@@ -212,8 +231,8 @@ else:
     LOGS_ROOT = config('LOGS_ROOT', cast=str)
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Zarrin API Doc',
-    'DESCRIPTION': 'Zarrin Api Service Document',
+    'TITLE': 'New Ipc API Doc',
+    'DESCRIPTION': 'newipc Api Service Document',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 
